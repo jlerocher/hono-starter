@@ -1,6 +1,8 @@
 import { serve } from "@hono/node-server";
+import { config } from "dotenv";
 import { Hono } from "hono";
 
+config();
 const app = new Hono();
 
 app.get("/", (c) => {
@@ -10,7 +12,7 @@ app.get("/", (c) => {
 serve(
     {
         fetch: app.fetch,
-        port: 3000,
+        port: process.env.API_PORT ? parseInt(process.env.API_PORT) : 3000,
     },
     (info) => {
         console.log(`Server is running on http://localhost:${info.port}`);
