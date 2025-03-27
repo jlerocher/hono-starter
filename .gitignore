@@ -8,6 +8,7 @@ dist
 .idea/workspace.xml
 .idea/usage.statistics.xml
 .idea/shelf
+db-password.txt
 
 # deps
 node_modules/
