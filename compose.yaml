@@ -1,7 +1,7 @@
 version: "3.9"
 
 services:
-    server:
+    hono-api-starter:
         build:
             context: .
         environment:
@@ -9,10 +9,10 @@ services:
         ports:
             - "8080:8080"
         depends_on:
-            db:
+            postgres-db:
                 condition: service_healthy
 
-    db:
+    postgres-db:
         image: postgres:17
         restart: always
         user: postgres

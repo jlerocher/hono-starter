@@ -18,5 +18,11 @@
         },
         "jsx": "react-jsx",
         "jsxImportSource": "hono/jsx"
-    }
+    },
+    "include": [
+        "src/**/*.ts"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
 }

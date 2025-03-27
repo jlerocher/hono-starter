@@ -11,7 +11,8 @@
         "db:pull": "prisma db pull",
         "db:migrate": "prisma migrate dev --name init",
         "db:generate": "prisma generate",
-        "db:studio": "prisma studio"
+        "db:studio": "prisma studio",
+        "postinstall": "prisma generate --schema ./src/prisma/schema.prisma"
     },
     "dependencies": {
         "@hono/node-server": "^1.14.0",
