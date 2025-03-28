@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "baseUrl": ".",
         "target": "ESNext",
         "module": "NodeNext",
         "strict": true,
@@ -14,12 +15,14 @@
         "paths": {
             "@/*": [
                 "./src/*"
+            ],
+            "root/*": [
+                "./*"
             ]
-        },
-        "jsx": "react-jsx",
-        "jsxImportSource": "hono/jsx"
+        }
     },
     "include": [
+        "./**/*.ts",
         "src/**/*.ts"
     ],
     "exclude": [
