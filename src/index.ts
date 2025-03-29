@@ -1,3 +1,4 @@
+// @ts-expect-error It show "Cannot find @/routes/home module or its corresponding type declarations" but it's work fine
 import { homeRoutes } from "@/routes/home";
 import { serve } from "@hono/node-server";
 import { config } from "dotenv";
