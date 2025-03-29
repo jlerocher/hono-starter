@@ -9,23 +9,12 @@
         "outDir": "dist",
         "pretty": true,
         "forceConsistentCasingInFileNames": true,
-        "types": [
-            "node"
-        ],
+        "types": ["node"],
         "paths": {
-            "@/*": [
-                "./src/*"
-            ],
-            "root/*": [
-                "./*"
-            ]
+            "@/*": ["./src/*"],
+            "root/*": ["./*"]
         }
     },
-    "include": [
-        "./**/*.ts",
-        "src/**/*.ts"
-    ],
-    "exclude": [
-        "node_modules"
-    ]
+    "include": ["./**/*.ts", "src/**/*.ts"],
+    "exclude": ["node_modules"]
 }
