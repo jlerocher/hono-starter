@@ -3,11 +3,15 @@ import { homeRoutes } from "@/routes/home";
 import { serve } from "@hono/node-server";
 import { config } from "dotenv";
 import { Hono } from "hono";
+import { logger } from "hono/logger";
 
 config();
 const app = new Hono();
+const apiUrl = process.env.API_URL || "http://localhost:3000";
 
-app.route("/api/v1", homeRoutes);
+app.use("*", logger());
+
+app.route("/api/v1/", homeRoutes);
 
 serve(
     {
@@ -15,6 +19,6 @@ serve(
         port: process.env.API_PORT ? parseInt(process.env.API_PORT) : 3000,
     },
     (info) => {
-        console.log(`Server is running on http://localhost:${info.port}`);
+        console.log(`Server is running on ${apiUrl}${info.port}`);
     },
 );
