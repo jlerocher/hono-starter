@@ -11,7 +11,7 @@ config();
 const app = new Hono();
 const apiUrl = process.env.API_URL || "http://localhost:3000";
 
-app.use("*", logger());
+app.use(logger());
 
 app.route("/api/v1/", homeRoutes);
 app.route("/api/v1/auth/", authRoutes);
