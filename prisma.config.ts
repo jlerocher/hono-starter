@@ -4,6 +4,6 @@ export default {
     earlyAccess: true,
     schema: {
         kind: "single",
-        filePath: "./prisma/schema.prisma",
+        filePath: "./src/prisma/schema.prisma",
     },
 } satisfies PrismaConfig;
