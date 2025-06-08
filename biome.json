@@ -7,7 +7,7 @@
     },
     "files": {
         "ignoreUnknown": false,
-        "ignore": []
+        "ignore": ["generated/**", "node_modules/**", "dist/**", "bun.lockb", ".bun/**", ".cache/**"]
     },
     "formatter": {
         "enabled": true,

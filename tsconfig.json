@@ -5,7 +5,18 @@
         "jsxImportSource": "hono/jsx",
         "baseUrl": ".",
         "paths": {
-            "@/*": ["src/*"]
+            "@/*": [
+                "src/*"
+            ]
         }
-    }
+    },
+    "exclude": [
+        "node_modules",
+        "dist",
+        "generated"
+    ],
+    "include": [
+        "src/**/*",
+        "hono.d.ts"
+    ]
 }
