@@ -18,24 +18,21 @@ const verifyIfUserExists = async (email: string) => {
     return user;
 };
 
-/**
- * Generates an access token for the user with the given id.
- *
- * @param userId The user id to generate an access token for.
- * @returns The generated access token.
- * @throws If the JWT_SECRET is not defined.
- */
 const generateAccessToken = async (userId: string) => {
+    const apiURL = Bun.env.API_URL;
+    if (!apiURL) return new Error("API_URL is not defined");
+    const secret = Bun.env.JWT_SECRET;
+    if (!secret) return new Error("JWT_SECRET is not defined");
+
     const payload = {
         sub: userId,
         exp: Math.floor(Date.now() / 1000) + 60 * 60, // 1 hour expiration
         iat: Math.floor(Date.now() / 1000),
-        iss: Bun.env.API_URL,
+        iss: apiURL,
         aud: "api",
         type: "access",
     };
-    const secret = Bun.env.JWT_SECRET;
-    if (!secret) throw new Error("JWT_SECRET is not defined");
+
     return await sign(payload, secret);
 };
 
@@ -44,14 +41,22 @@ const generateAccessToken = async (userId: string) => {
  *
  * @param userId The user id to generate a refresh token for.
  * @returns The generated refresh token.
- * @throws If the JWT_SECRET or API_URL is not defined.
+ * @throws If the JWT_SECRET is not defined.
+ * @throws If the API_URL is not defined.
  */
-
-export const generateRefreshToken = async (userId: string) => {
-    const secret = Bun.env.JWT_SECRET;
-    if (!secret) throw new Error("JWT_SECRET is not defined");
+export const generateRefreshToken = async (
+    userId: string,
+): Promise<string | Error> => {
+    const jwtSecret = Bun.env.JWT_SECRET;
     const jwtIssuer = Bun.env.API_URL;
-    if (!jwtIssuer) throw new Error("API_URL is not defined");
+
+    if (!jwtSecret) {
+        return new Error("JWT_SECRET is not defined");
+    }
+    if (!jwtIssuer) {
+        return new Error("API_URL is not defined");
+    }
+
     const payload = {
         sub: userId,
         exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7, // 7 days expiration
@@ -60,7 +65,8 @@ export const generateRefreshToken = async (userId: string) => {
         aud: "api",
         type: "refresh",
     };
-    return await sign(payload, secret);
+
+    return sign(payload, jwtSecret);
 };
 
 /**
@@ -99,13 +105,29 @@ export const registerNewUser = async (email: string, password: string) => {
             email: email,
         },
     });
+    const accessToken = await generateAccessToken(newUser.id);
+    if (accessToken instanceof Error) {
+        return {
+            success: false,
+            message: "Failed to generate access token",
+            data: null,
+        };
+    }
+    const refreshToken = await generateRefreshToken(newUser.id);
+    if (refreshToken instanceof Error) {
+        return {
+            success: false,
+            message: "Failed to generate refresh token",
+            data: null,
+        };
+    }
     const newAccount = await prisma.account.create({
         data: {
             userId: newUser.id,
             provider: "CREDENTIALS",
             providerAccountId: newUser.id,
-            accessToken: await generateAccessToken(newUser.id),
-            refreshToken: await generateRefreshToken(newUser.id),
+            accessToken: accessToken,
+            refreshToken: refreshToken,
             tokenType: "BEARER",
         },
     });
