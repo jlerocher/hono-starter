@@ -23,7 +23,7 @@ registerRouter.post("/register", async (c) => {
         );
     }
 
-    const newUser = await registerNewUser(email, password);
+    const newUser = await registerNewUser(name, email, password);
     if (!newUser.success) {
         return c.json(
             {

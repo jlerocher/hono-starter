@@ -82,8 +82,9 @@ const saltAndHashPassword = async (password: string) => {
 };
 
 /**
- * Registers a new user with the given email and password.
+ * Registers a new user with the given name, email and password.
  *
+ * @param name The name of the new user.
  * @param email The email address for the new user.
  * @param password The password for the new user.
  * @returns An object indicating the success or failure of the registration process.
@@ -91,7 +92,11 @@ const saltAndHashPassword = async (password: string) => {
  *          On failure, it returns an error message indicating that the user already exists.
  */
 
-export const registerNewUser = async (email: string, password: string) => {
+export const registerNewUser = async (
+    name: string,
+    email: string,
+    password: string,
+) => {
     const user = await verifyIfUserExists(email);
     if (user) {
         return {
@@ -103,6 +108,7 @@ export const registerNewUser = async (email: string, password: string) => {
     const newUser = await prisma.user.create({
         data: {
             email: email,
+            name: name,
         },
     });
     const accessToken = await generateAccessToken(newUser.id);
