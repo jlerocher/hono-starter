@@ -1,6 +1,6 @@
+import bcrypt from "bcryptjs";
 import { sign } from "hono/jwt";
 import { prisma } from "prisma/prisma-client";
-import bcrypt = require("bcryptjs/umd/types");
 
 /**
  * Checks if a user with the given email already exists in the database.
