@@ -2,9 +2,13 @@
     "name": "hono-starter",
     "scripts": {
         "dev": "bun run --hot src/index.ts",
-        "check": "biome check . --fix"
+        "check": "biome check . --fix",
+        "db:generate": "prisma generate",
+        "db:push": "prisma db push",
+        "db:pull": "prisma db pull"
     },
     "dependencies": {
+        "@prisma/client": "6.9.0",
         "bcryptjs": "^3.0.2",
         "hono": "^4.7.11",
         "jsonwebtoken": "^9.0.2",
