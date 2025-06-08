@@ -1,13 +1,14 @@
 {
-  "name": "hono-starter",
-  "scripts": {
-    "dev": "bun run --hot src/index.ts"
-  },
-  "dependencies": {
-    "hono": "^4.7.11"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "1.9.4",
-    "@types/bun": "latest"
-  }
+    "name": "hono-starter",
+    "scripts": {
+        "dev": "bun run --hot src/index.ts",
+        "check": "biome check . --fix"
+    },
+    "dependencies": {
+        "hono": "^4.7.11"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "1.9.4",
+        "@types/bun": "latest"
+    }
 }
