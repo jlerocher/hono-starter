@@ -1,4 +1,0 @@
-*.md
-*.mdx!
-.env
-db-password.txt
