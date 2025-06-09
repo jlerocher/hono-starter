@@ -23,7 +23,7 @@ bun install
 
 To run:
 ```sh
-bun run dev
+bun dev
 ```
 
 open http://localhost:3000/api/v1/
