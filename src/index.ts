@@ -1,3 +1,4 @@
+import { refreshTokenRouter } from "@/auth/routes/refresh-token-route";
 import { registerRouter } from "@/auth/routes/register-route";
 import { Hono } from "hono";
 import { logger } from "hono/logger";
@@ -8,6 +9,7 @@ app.use(logger());
 
 // Auth routes
 app.route("/auth", registerRouter);
+app.route("/auth", refreshTokenRouter);
 
 export default {
     port: API_PORT,

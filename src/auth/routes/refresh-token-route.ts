@@ -5,9 +5,9 @@ import { generateNewTokens } from "../services/refresh-token-service";
 const refreshTokenRouter = new Hono();
 
 refreshTokenRouter.post("/refresh-token", async (c) => {
-    const oldRefreshToken =
-        (await c.req.json()) || getCookie(c, "refreshToken");
-    const userId = (await c.req.json()) || getCookie(c, "userId");
+    const body = await c.req.json();
+    const oldRefreshToken = body.refreshToken || getCookie(c, "refreshToken");
+    const userId = body.userId || getCookie(c, "userId");
 
     if (!oldRefreshToken || !userId) {
         return c.json(
@@ -53,4 +53,4 @@ refreshTokenRouter.post("/refresh-token", async (c) => {
     );
 });
 
-export default refreshTokenRouter;
+export { refreshTokenRouter };
