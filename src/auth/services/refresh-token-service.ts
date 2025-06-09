@@ -39,6 +39,13 @@ const revokeRefreshToken = async (refreshToken: string) => {
     });
 };
 
+/**
+ * Stores an access token in the database.
+ *
+ * @param userId The ID of the user associated with the given access token.
+ * @param accessToken The access token to store.
+ * @returns A promise that resolves when the token has been successfully stored.
+ */
 const storeAccessToken = async (userId: string, accessToken: string) => {
     await prisma.account.updateMany({
         where: {
@@ -50,6 +57,13 @@ const storeAccessToken = async (userId: string, accessToken: string) => {
     });
 };
 
+/**
+ * Stores a refresh token in the database.
+ *
+ * @param userId The ID of the user associated with the given refresh token.
+ * @param refreshToken The refresh token to store.
+ * @returns A promise that resolves when the token has been successfully stored.
+ */
 const storeRefreshToken = async (userId: string, refreshToken: string) => {
     await prisma.refreshToken.create({
         data: {
@@ -61,16 +75,11 @@ const storeRefreshToken = async (userId: string, refreshToken: string) => {
 };
 
 /**
- * Generates a new access and refresh token pair given an existing refresh token
- * and the associated user ID.
+ * Generates new access and refresh tokens for a user, revoking the old refresh token.
  *
- * @param oldRefreshToken The old refresh token to replace.
- * @param userId The ID of the user associated with the given refresh token.
- * @returns An object containing the new access and refresh token strings.
- *          The access token is a valid JWT that can be used to authenticate
- *          with the API, and the refresh token is a valid token that can be
- *          used to obtain a new access token when the existing one expires.
- *          If the old refresh token is invalid, both tokens will be null.
+ * @param oldRefreshToken The old refresh token to be validated and revoked.
+ * @param userId The ID of the user for whom new tokens are being generated.
+ * @returns An object containing the new access token and refresh token, or null tokens if generation fails.
  */
 export const generateNewTokens = async (
     oldRefreshToken: string,
