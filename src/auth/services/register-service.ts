@@ -18,7 +18,7 @@ const verifyIfUserExists = async (email: string) => {
     return user;
 };
 
-const generateAccessToken = async (userId: string) => {
+export const generateAccessToken = async (userId: string) => {
     const apiURL = Bun.env.API_URL;
     if (!apiURL) return new Error("API_URL is not defined");
     const secret = Bun.env.JWT_SECRET;
@@ -133,8 +133,14 @@ export const registerNewUser = async (
             provider: "CREDENTIALS",
             providerAccountId: newUser.id,
             accessToken: accessToken,
-            refreshToken: refreshToken,
             tokenType: "BEARER",
+        },
+    });
+    const newRefreshToken = await prisma.refreshToken.create({
+        data: {
+            userId: newUser.id,
+            token: refreshToken,
+            expiresAt: new Date(Date.now() + 60 * 60 * 24 * 7 * 1000), // 7 days expiration
         },
     });
     return {
@@ -143,7 +149,7 @@ export const registerNewUser = async (
         data: {
             newUser,
             accessToken: newAccount.accessToken,
-            refreshToken: newAccount.refreshToken,
+            refreshToken: newRefreshToken.token,
         },
     };
 };

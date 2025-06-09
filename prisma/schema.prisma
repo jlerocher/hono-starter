@@ -39,6 +39,8 @@ model User {
   updatedAt     DateTime? @updatedAt
 
   Account Account[]
+
+  RefreshToken RefreshToken[]
 }
 
 model Account {
@@ -48,7 +50,6 @@ model Account {
   providerAccountId String?
   accessToken       String?
   password          String?
-  refreshToken      String?
   expiresAt         Int?
   tokenType         TokenType
   createdAt         DateTime     @default(now())
@@ -57,4 +58,15 @@ model Account {
   user User @relation(fields: [userId], references: [id])
 
   @@unique([provider, providerAccountId])
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  revoked   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  user User @relation(fields: [userId], references: [id])
 }
