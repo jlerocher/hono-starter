@@ -1,5 +1,13 @@
 import { Hono } from "hono";
-import { prisma } from "prisma/prisma-client";
+import {
+    comparePassword,
+    getUserAccountById,
+    getUserByEmail,
+} from "../services/login-service";
+import {
+    generateAccessToken,
+    generateRefreshToken,
+} from "../services/register-service";
 import { validateLogin } from "../validations/validation";
 
 const LoginRouter = new Hono();
@@ -21,6 +29,7 @@ LoginRouter.post("/login", async (c) => {
     if (!validation.success) {
         return c.json(
             {
+                success: false,
                 message: "User registration failed!",
                 errors: validation.error.errors,
             },
@@ -28,15 +37,58 @@ LoginRouter.post("/login", async (c) => {
         );
     }
 
-    const user = await prisma.user.findUnique({
-        where: email,
-    });
+    const user = await getUserByEmail(email);
 
-    return c.json({
-        success: true,
-        message: "Login successful",
-        data: { email, password },
-    });
+    if (!user) {
+        return c.json(
+            {
+                success: false,
+                message: "User not found",
+                data: null,
+            },
+            404,
+        );
+    }
+    const userAccount = await getUserAccountById(user[0].id);
+
+    if (!userAccount) {
+        return c.json(
+            {
+                success: false,
+                message: "User account not found",
+                data: null,
+            },
+            404,
+        );
+    }
+
+    const isPasswordMatch = await comparePassword(
+        password,
+        userAccount[0].password ?? "",
+    );
+
+    if (!isPasswordMatch) {
+        return c.json(
+            {
+                success: false,
+                message: "Invalid password",
+                data: null,
+            },
+            401,
+        );
+    }
+
+    const accessToken = generateAccessToken(user[0].id);
+    const refreshToken = generateRefreshToken(user[0].id);
+
+    return c.json(
+        {
+            success: true,
+            message: "Login successful",
+            data: { ...user[0], accessToken, refreshToken },
+        },
+        200,
+    );
 });
 
 export default LoginRouter;

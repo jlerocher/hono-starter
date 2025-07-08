@@ -132,6 +132,7 @@ export const registerNewUser = async (
             userId: newUser.id,
             provider: "CREDENTIALS",
             providerAccountId: newUser.id,
+            password: password,
             accessToken: accessToken,
             tokenType: "BEARER",
         },
