@@ -23,7 +23,20 @@ export const registerSchema = z
         path: ["passwordConfirmation"],
     });
 
+export const loginSchema = z.object({
+    email: z
+        .string()
+        .email("Invalid email address")
+        .min(1, "Email is required"),
+    password: z.string().min(8, "Password is required"),
+});
+
 export const validateRegister = (data: typeof registerSchema._type) => {
     const result = registerSchema.safeParse(data);
+    return result;
+};
+
+export const validateLogin = (data: typeof loginSchema._type) => {
+    const result = loginSchema.safeParse(data);
     return result;
 };
