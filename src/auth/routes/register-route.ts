@@ -1,3 +1,4 @@
+import { ApiError, ValidationError } from "@/utils/errors";
 import { Hono } from "hono";
 import { registerNewUser } from "../services/register-service";
 import { validateRegister } from "../validations/validation";
@@ -14,31 +15,19 @@ registerRouter.post("/register", async (c) => {
     });
 
     if (!validation.success) {
-        return c.json(
-            {
-                message: "User registration failed!",
-                errors: validation.error.errors,
-            },
-            400,
+        throw new ValidationError(
+            validation.error.errors,
+            "User registration failed!",
         );
     }
 
     const newUser = await registerNewUser(name, email, password);
     if (!newUser.success) {
-        return c.json(
-            {
-                message: newUser.message,
-                errors: newUser.data,
-            },
-            400,
-        );
+        throw new ApiError(newUser.message, 400);
     }
 
     if (!newUser.data) {
-        return c.json(
-            { message: "Registration failed - no data returned" },
-            500,
-        );
+        throw new ApiError("Registration failed - no data returned", 500);
     }
 
     return c.json(

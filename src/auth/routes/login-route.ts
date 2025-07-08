@@ -1,3 +1,9 @@
+import {
+    ApiError,
+    NotFoundError,
+    UnauthorizedError,
+    ValidationError,
+} from "@/utils/errors";
 import { Hono } from "hono";
 import {
     comparePassword,
@@ -16,51 +22,26 @@ const LoginRouter = new Hono();
 LoginRouter.post("/login", async (c) => {
     const { email, password } = await c.req.json();
     if (!email || !password) {
-        return c.json(
-            {
-                success: false,
-                message: "Email and password are required",
-                data: null,
-            },
-            400,
-        );
+        throw new ApiError("Email and password are required", 400);
     }
 
     const validation = validateLogin({ email, password });
     if (!validation.success) {
-        return c.json(
-            {
-                success: false,
-                message: "User registration failed!",
-                errors: validation.error.errors,
-            },
-            400,
+        throw new ValidationError(
+            validation.error.errors,
+            "User registration failed!",
         );
     }
 
     const user = await getUserByEmail(email);
 
     if (!user) {
-        return c.json(
-            {
-                success: false,
-                message: "User not found",
-                data: null,
-            },
-            404,
-        );
+        throw new NotFoundError("User not found");
     }
     const userAccount = await getUserAccountById(user[0].id);
 
     if (!userAccount) {
-        return c.json(
-            {
-                success: false,
-                message: "User account not found",
-                data: null,
-            },
-            404,
-        );
+        throw new NotFoundError("User account not found");
     }
 
     const isPasswordMatch = await comparePassword(
@@ -69,27 +50,13 @@ LoginRouter.post("/login", async (c) => {
     );
 
     if (!isPasswordMatch) {
-        return c.json(
-            {
-                success: false,
-                message: "Invalid password",
-                data: null,
-            },
-            401,
-        );
+        throw new UnauthorizedError("Invalid password");
     }
 
     const accessToken = await generateAccessToken(user[0].id);
     const refreshToken = await generateRefreshToken(user[0].id);
     if (refreshToken instanceof Error) {
-        return c.json(
-            {
-                success: false,
-                message: "Failed to generate refresh token",
-                data: null,
-            },
-            500,
-        );
+        throw new ApiError("Failed to generate refresh token", 500);
     }
     await saveRefreshToken(user[0].id, refreshToken);
 

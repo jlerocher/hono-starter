@@ -18,10 +18,11 @@ const verifyIfUserExists = async (email: string) => {
     return user;
 };
 
+import { env } from "@/config";
 export const generateAccessToken = async (userId: string) => {
-    const apiURL = Bun.env.API_URL;
+    const apiURL = env.API_URL;
     if (!apiURL) return new Error("API_URL is not defined");
-    const secret = Bun.env.JWT_SECRET;
+    const secret = env.JWT_SECRET;
     if (!secret) return new Error("JWT_SECRET is not defined");
 
     const payload = {
@@ -47,8 +48,8 @@ export const generateAccessToken = async (userId: string) => {
 export const generateRefreshToken = async (
     userId: string,
 ): Promise<string | Error> => {
-    const jwtSecret = Bun.env.JWT_SECRET;
-    const jwtIssuer = Bun.env.API_URL;
+    const jwtSecret = env.JWT_SECRET;
+    const jwtIssuer = env.API_URL;
 
     if (!jwtSecret) {
         return new Error("JWT_SECRET is not defined");
