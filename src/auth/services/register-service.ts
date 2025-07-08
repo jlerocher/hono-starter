@@ -81,6 +81,29 @@ const saltAndHashPassword = async (password: string) => {
     return hash;
 };
 
+export const saveRefreshToken = async (
+    userId: string,
+    refreshToken: string,
+) => {
+    // Invalidate all existing refresh tokens for the user
+    await prisma.refreshToken.updateMany({
+        where: {
+            userId: userId,
+        },
+        data: {
+            revoked: true,
+        },
+    });
+    const newRefreshToken = await prisma.refreshToken.create({
+        data: {
+            userId: userId,
+            token: refreshToken,
+            expiresAt: new Date(Date.now() + 60 * 60 * 24 * 7 * 1000), // 7 days expiration
+        },
+    });
+    return newRefreshToken;
+};
+
 /**
  * Registers a new user with the given name, email and password.
  *
@@ -91,7 +114,6 @@ const saltAndHashPassword = async (password: string) => {
  *          On success, it returns the newly created user and associated tokens.
  *          On failure, it returns an error message indicating that the user already exists.
  */
-
 export const registerNewUser = async (
     name: string,
     email: string,
@@ -132,7 +154,7 @@ export const registerNewUser = async (
             userId: newUser.id,
             provider: "CREDENTIALS",
             providerAccountId: newUser.id,
-            password: password,
+            password: await saltAndHashPassword(password),
             accessToken: accessToken,
             tokenType: "BEARER",
         },

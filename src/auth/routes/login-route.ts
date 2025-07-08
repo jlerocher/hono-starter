@@ -7,6 +7,7 @@ import {
 import {
     generateAccessToken,
     generateRefreshToken,
+    saveRefreshToken,
 } from "../services/register-service";
 import { validateLogin } from "../validations/validation";
 
@@ -78,8 +79,19 @@ LoginRouter.post("/login", async (c) => {
         );
     }
 
-    const accessToken = generateAccessToken(user[0].id);
-    const refreshToken = generateRefreshToken(user[0].id);
+    const accessToken = await generateAccessToken(user[0].id);
+    const refreshToken = await generateRefreshToken(user[0].id);
+    if (refreshToken instanceof Error) {
+        return c.json(
+            {
+                success: false,
+                message: "Failed to generate refresh token",
+                data: null,
+            },
+            500,
+        );
+    }
+    await saveRefreshToken(user[0].id, refreshToken);
 
     return c.json(
         {
