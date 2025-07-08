@@ -1,8 +1,8 @@
 import bcrypt from "bcryptjs";
-import { prisma } from "prisma/prisma-client";
+import { prismaUniqueInstance } from "prisma/prisma-client";
 
 export const getUserByEmail = async (email: string) => {
-    const user = await prisma.user.findMany({
+    const user = await prismaUniqueInstance.user.findMany({
         where: {
             email: email,
         },
@@ -21,7 +21,7 @@ export const comparePassword = async (
 };
 
 export const getUserAccountById = async (id: string) => {
-    const account = await prisma.account.findMany({
+    const account = await prismaUniqueInstance.account.findMany({
         where: {
             userId: id,
         },

@@ -7,4 +7,4 @@ import { PrismaClient } from "../generated/prisma";
  * @remarks
  * It is globally exported for use in the application.
  */
-export const prisma = new PrismaClient();
+export const prismaUniqueInstance = new PrismaClient();
