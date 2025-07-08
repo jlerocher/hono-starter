@@ -3,7 +3,7 @@ import { registerRouter } from "@/auth/routes/register-route";
 import { env } from "@/config";
 import { logger } from "@/utils/logger";
 import { type Context, Hono } from "hono";
-import { logger as pinoLogger } from "hono-pino";
+import { pinoLogger } from "hono-pino";
 import { rateLimiter } from "hono-rate-limiter";
 import { csrf } from "hono/csrf";
 import { secureHeaders } from "hono/secure-headers";
@@ -37,11 +37,7 @@ const limiter = rateLimiter({
 
 app.use(limiter);
 app.use(errorHandler);
-app.use(
-    pinoLogger({
-        logger: logger,
-    }),
-);
+app.use(pinoLogger({ pino: logger }));
 app.use(async (c, next) => {
     const correlationId = c.req.header("X-Correlation-ID") || randomUUID();
     c.set("correlationId", correlationId);
