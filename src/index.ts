@@ -51,4 +51,7 @@ app.route("/auth", registerRouter);
 app.route("/auth", refreshTokenRouter);
 app.route("/auth", LoginRouter);
 
-export default app;
+export default {
+    port: API_PORT,
+    fetch: app.fetch,
+};
