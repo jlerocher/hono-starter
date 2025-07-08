@@ -1,5 +1,6 @@
 import { ApiError, ValidationError } from "@/utils/errors";
 import { Hono } from "hono";
+import { prisma } from "prisma/prisma-client";
 import { registerNewUser } from "../services/register-service";
 import { validateRegister } from "../validations/validation";
 
@@ -21,7 +22,7 @@ registerRouter.post("/register", async (c) => {
         );
     }
 
-    const newUser = await registerNewUser(name, email, password);
+    const newUser = await registerNewUser(name, email, password, prisma);
     if (!newUser.success) {
         throw new ApiError(newUser.message, 400);
     }

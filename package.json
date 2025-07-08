@@ -12,7 +12,9 @@
     "@prisma/client": "6.9.0",
     "bcryptjs": "^3.0.2",
     "hono": "^4.7.11",
+    "hono-pino": "^0.9.1",
     "hono-rate-limiter": "^0.4.2",
+    "pino": "^9.7.0",
     "prisma": "^6.9.0",
     "zod": "^3.25.56"
   },

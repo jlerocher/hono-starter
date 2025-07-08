@@ -1,11 +1,13 @@
 import { refreshTokenRouter } from "@/auth/routes/refresh-token-route";
 import { registerRouter } from "@/auth/routes/register-route";
 import { env } from "@/config";
+import { logger } from "@/utils/logger";
 import { type Context, Hono } from "hono";
+import { logger as pinoLogger } from "hono-pino";
 import { rateLimiter } from "hono-rate-limiter";
 import { csrf } from "hono/csrf";
-import { logger } from "hono/logger";
 import { secureHeaders } from "hono/secure-headers";
+import { randomUUID } from "node:crypto";
 import LoginRouter from "./auth/routes/login-route";
 
 import { errorHandler } from "@/utils/error-handler";
@@ -35,7 +37,16 @@ const limiter = rateLimiter({
 
 app.use(limiter);
 app.use(errorHandler);
-app.use(logger());
+app.use(
+    pinoLogger({
+        logger: logger,
+    }),
+);
+app.use(async (c, next) => {
+    const correlationId = c.req.header("X-Correlation-ID") || randomUUID();
+    c.set("correlationId", correlationId);
+    await next();
+});
 app.use(secureHeaders());
 app.use(csrf());
 
@@ -44,7 +55,4 @@ app.route("/auth", registerRouter);
 app.route("/auth", refreshTokenRouter);
 app.route("/auth", LoginRouter);
 
-export default {
-    port: API_PORT,
-    fetch: app.fetch,
-};
+export default app;

@@ -1,6 +1,6 @@
+import type { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { sign } from "hono/jwt";
-import { prisma } from "prisma/prisma-client";
 
 /**
  * Checks if a user with the given email already exists in the database.
@@ -8,7 +8,7 @@ import { prisma } from "prisma/prisma-client";
  * @param email The email address to search for.
  * @returns The user if found, or null if no user exists.
  */
-const verifyIfUserExists = async (email: string) => {
+const verifyIfUserExists = async (email: string, prisma: PrismaClient) => {
     const user = await prisma.user.findUnique({
         where: {
             email: email,
@@ -85,6 +85,7 @@ const saltAndHashPassword = async (password: string) => {
 export const saveRefreshToken = async (
     userId: string,
     refreshToken: string,
+    prisma: PrismaClient,
 ) => {
     // Invalidate all existing refresh tokens for the user
     await prisma.refreshToken.updateMany({
@@ -119,8 +120,9 @@ export const registerNewUser = async (
     name: string,
     email: string,
     password: string,
+    prisma: PrismaClient,
 ) => {
-    const user = await verifyIfUserExists(email);
+    const user = await verifyIfUserExists(email, prisma);
     if (user) {
         return {
             success: false,
