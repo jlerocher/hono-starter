@@ -2,7 +2,7 @@ import {
     generateAccessToken,
     generateRefreshToken,
 } from "@/auth/services/register-service";
-import { prisma } from "prisma/prisma-client";
+import { prismaUniqueInstance } from "prisma/prisma-client";
 
 /**
  * Checks if the given refresh token is valid and has not expired or been revoked.
@@ -11,7 +11,7 @@ import { prisma } from "prisma/prisma-client";
  * @returns True if the token is valid, false otherwise.
  */
 const isRefreshTokenValid = async (refreshToken: string) => {
-    const token = await prisma.refreshToken.findUnique({
+    const token = await prismaUniqueInstance.refreshToken.findUnique({
         where: {
             token: refreshToken,
         },
@@ -29,7 +29,7 @@ const isRefreshTokenValid = async (refreshToken: string) => {
  * @returns A promise that resolves when the token has been successfully revoked.
  */
 const revokeRefreshToken = async (refreshToken: string) => {
-    await prisma.refreshToken.updateMany({
+    await prismaUniqueInstance.refreshToken.updateMany({
         where: {
             token: refreshToken,
         },
@@ -47,7 +47,7 @@ const revokeRefreshToken = async (refreshToken: string) => {
  * @returns A promise that resolves when the token has been successfully stored.
  */
 const storeAccessToken = async (userId: string, accessToken: string) => {
-    await prisma.account.updateMany({
+    await prismaUniqueInstance.account.updateMany({
         where: {
             userId: userId,
         },
@@ -65,7 +65,7 @@ const storeAccessToken = async (userId: string, accessToken: string) => {
  * @returns A promise that resolves when the token has been successfully stored.
  */
 const storeRefreshToken = async (userId: string, refreshToken: string) => {
-    await prisma.refreshToken.create({
+    await prismaUniqueInstance.refreshToken.create({
         data: {
             userId: userId,
             token: refreshToken,
